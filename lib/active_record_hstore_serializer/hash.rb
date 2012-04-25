@@ -3,7 +3,7 @@ class Hash
   def to_hstore
     return "" if empty?
 
-    map { |idx, val| 
+    reject{|idx, val| idx =~ /_type$/ }.map { |idx, val| 
       iv = [idx,val].map { |_| 
         e = _.to_s.gsub(/"/, '\"')
         if _.nil?
@@ -15,7 +15,10 @@ class Hash
         end
       }
 
-      "%s=>%s" % iv
+      iv << idx
+      iv << val.class
+
+      "%s=>%s,%s_type=>%s" % iv
     } * ","
   end
 

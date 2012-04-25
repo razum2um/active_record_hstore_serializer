@@ -29,7 +29,12 @@ class String
         end
       }
     }
-    Hash[ token_pairs ]
+    h = Hash[ token_pairs ]
+    deserializators = { 'Fixnum' => 'to_i', 'String' => 'to_s', 'Float' => 'to_f' }
+    new_token_pairs = h.reject{|idx, val| idx =~ /_type$/ }.map { |idx, val| 
+      [idx, deserializators.keys.include?(val.class.to_s) ? val.send(deserializators[h["#{idx}_type"]]) : val]
+    }
+    Hash[ new_token_pairs ]
   end
 
   private
